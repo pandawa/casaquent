@@ -1,20 +1,20 @@
 {
-    "name": "sonvq/cassandra",
+    "name": "pandawa/casaquent",
     "description": "Cassandra Eloquent model and Query builder for Laravel",
     "keywords": ["laravel","eloquent","cassandra","database","model"],
-    "homepage": "https://github.com/sonvq-qsoftvn/laravel-cassandra",
+    "homepage": "https://github.com/pandawa/casaquent",
     "authors": [
         {
-            "name": "Quang Son Pro",
-            "homepage": "https://byant.co.uk"
+            "name": "Iqbal Maulana",
+            "email": "iq.bluejack@gmail.com"
         }
     ],
     "license" : "MIT",
     "require": {
-        "illuminate/support": "5.2.*",
-        "illuminate/container": "5.2.*",
-        "illuminate/database": "5.2.*",
-        "illuminate/events": "5.2.*"
+        "illuminate/support": "^5.8|^8.0",
+        "illuminate/container": "^5.8|^8.0",
+        "illuminate/database": "^5.8|^8.0",
+        "illuminate/events": "^5.8|^8.0"
     },
     "require-dev": {
 
@@ -26,10 +26,6 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php",
-            "tests/models",
-            "tests/seeds"
-        ]
+        "classmap": []
     }
 }
