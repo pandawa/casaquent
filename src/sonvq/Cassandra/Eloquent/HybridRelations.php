@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace sonvq\Cassandra\Eloquent;
 
@@ -172,7 +172,7 @@ trait HybridRelations
      * @param  string  $id
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function morphTo($name = null, $type = null, $id = null)
+    public function morphTo($name = null, $type = null, $id = null, $ownerKey = null)
     {
         // If no name is provided, we will use the backtrace to get the function name
         // since that is most likely the name of the polymorphic interface. We can
@@ -209,7 +209,7 @@ trait HybridRelations
                 $instance->newQuery(),
                 $this,
                 $id,
-                $instance->getKeyName(),
+                $ownerKey ?? $instance->getKeyName(),
                 $type,
                 $name
             );
@@ -219,14 +219,15 @@ trait HybridRelations
     /**
      * Define a many-to-many relationship.
      *
-     * @param  string  $related
-     * @param  string  $collection
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
-     * @param  string  $relation
+     * @param  string $related
+     * @param  string $collection
+     * @param  string $foreignKey
+     * @param  string $relatedPivotKey
+     * @param  string $relation
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function belongsToMany($related, $collection = null, $foreignKey = null, $otherKey = null, $relation = null)
+    public function belongsToMany($related, $collection = null, $foreignKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null, $relation = null)
     {
         // If no relationship name was passed, we will pull backtraces to get the
         // name of the calling function. We will use that function name as the
@@ -237,7 +238,7 @@ trait HybridRelations
 
         // Check if it is a relation with an original model.
         if (! is_subclass_of($related, 'sonvq\Cassandra\Eloquent\Model')) {
-            return parent::belongsToMany($related, $collection, $foreignKey, $otherKey, $relation);
+            return parent::belongsToMany($related, $collection, $foreignKey, $relatedPivotKey, $parentKey, $relatedKey, $relation);
         }
 
         // First, we'll need to determine the foreign key and "other key" for the
@@ -247,7 +248,7 @@ trait HybridRelations
 
         $instance = new $related;
 
-        $otherKey = $otherKey ?: $instance->getForeignKey() . 's';
+        $relatedPivotKey = $relatedPivotKey ?: $instance->getForeignKey() . 's';
 
         // If no table name was provided, we can guess it by concatenating the two
         // models using underscores in alphabetical order. The two model names
@@ -261,6 +262,15 @@ trait HybridRelations
         // appropriate query constraint and entirely manages the hydrations.
         $query = $instance->newQuery();
 
-        return new BelongsToMany($query, $this, $collection, $foreignKey, $otherKey, $relation);
+        return new BelongsToMany(
+            $query,
+            $this,
+            $collection,
+            $foreignKey,
+            $relatedPivotKey,
+            $parentKey ?: $this->getKeyName(),
+            $relatedKey ?: $instance->getKeyName(),
+            $relation
+        );
     }
 }
